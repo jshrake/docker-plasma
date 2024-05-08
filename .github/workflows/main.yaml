@@ -1,0 +1,176 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  plasma:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            jshrake/plasma
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha            
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./plasma
+          file: ./plasma/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=jshrake/plasma:latest
+          cache-to: type=inline
+
+  pool-tcp-server:
+    runs-on: ubuntu-latest
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            jshrake/plasma-pool-tcp-server
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha            
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          # network=host driver-opt needed to push to local registry
+          driver-opts: network=host
+      - name: Login to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build plasma
+        uses: docker/build-push-action@v5
+        with:
+          context: ./plasma
+          file: ./plasma/Dockerfile
+          push: true
+          tags: localhost:5000/plasma:latest
+          cache-from: type=registry,ref=jshrake/plasma:latest
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./pool-tcp-server
+          file: ./pool-tcp-server/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=jshrake/plasma-pool-tcp-server:latest
+          cache-to: type=inline
+          build-contexts: |
+            plasma=docker-image://localhost:5000/plasma:latest
+
+  pool-zeroconf-server:
+    runs-on: ubuntu-latest
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            jshrake/plasma-pool-zeroconf-server
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha            
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          # network=host driver-opt needed to push to local registry
+          driver-opts: network=host
+      - name: Login to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build plasma
+        uses: docker/build-push-action@v5
+        with:
+          context: ./plasma
+          file: ./plasma/Dockerfile
+          push: true
+          tags: localhost:5000/plasma:latest
+          cache-from: type=registry,ref=jshrake/plasma:latest
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./pool-zeroconf-server
+          file: ./pool-zeroconf-server/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=jshrake/plasma-pool-zeroconf-server:latest
+          cache-to: type=inline
+          build-contexts: |
+            plasma=docker-image://localhost:5000/plasma:latest

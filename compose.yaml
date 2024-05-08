@@ -1,0 +1,17 @@
+services:
+  plasma-pool-tcp-server:
+    image: jshrake/plasma-pool-tcp-server:latest
+    network_mode: "host"
+    ports:
+      - 65456:65456
+    environment:
+      - PLASMA_POOL_TCP_PORT=65456
+  plasma-zeroconf-server:
+    image: jshrake/plasma-pool-zeroconf-server:latest
+    network_mode: "host"
+    privileged: true
+    environment:
+      - PLASMA_ZERCONF_POOL_SERVER=tcp://localhost:65456/
+    volumes:
+      - /var/run/dbus:/var/run/dbus
+      - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
