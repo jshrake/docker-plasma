@@ -2,8 +2,6 @@ services:
   plasma-pool-tcp-server:
     image: jshrake/plasma-pool-tcp-server:latest
     network_mode: "host"
-    ports:
-      - 65456:65456
     environment:
       - PLASMA_POOL_TCP_PORT=65456
   plasma-zeroconf-server:

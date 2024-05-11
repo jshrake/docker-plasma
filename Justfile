@@ -7,7 +7,7 @@ plasma:
     docker build -t plasma:latest -f plasma/Dockerfile plasma/.
 
 pool-tcp-server: plasma
-    docker build -t plasma-pool-tcp-server:latest -f pool-tcp-server/Dockerfile pool-tcp-server/.
+    docker build -t jshrake/plasma-pool-tcp-server:latest -f pool-tcp-server/Dockerfile pool-tcp-server/.
 
 pool-zeroconf-server: plasma
-    docker build -t plasma-pool-zeroconf-server:latest -f pool-zeroconf-server/Dockerfile pool-zeroconf-server/.
+    docker build -t jshrake/plasma-pool-zeroconf-server:latest -f pool-zeroconf-server/Dockerfile pool-zeroconf-server/.

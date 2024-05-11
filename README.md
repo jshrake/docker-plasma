@@ -6,10 +6,9 @@
 
 ---
 
-Docker images and compose file for [plasma](https://github.com/zeugma-hamper/plasma). Specificaly for [pool-tcp-server](https://github.com/zeugma-hamper/plasma/blob/iz/libPlasma/c/pool_tcp_server.c) and [pool-server-zeroconf-adapter](https://github.com/zeugma-hamper/plasma/blob/iz/libPlasma/zeroconf/pool-server-zeroconf-adapter.cpp). Everything you need to run a pool tcp server that is zeroconf announced on your local network!
+Docker images and [compose](./compose.yaml) file for [plasma](https://github.com/zeugma-hamper/plasma). Specificaly for [pool-tcp-server](https://github.com/zeugma-hamper/plasma/blob/iz/libPlasma/c/pool_tcp_server.c) and [pool-server-zeroconf-adapter](https://github.com/zeugma-hamper/plasma/blob/iz/libPlasma/zeroconf/pool-server-zeroconf-adapter.cpp). Everything you need to run a pool tcp server that is zeroconf announced on your local network!
 
 ```console
-just build
 docker compose up
 ```
 
