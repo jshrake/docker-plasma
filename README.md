@@ -1,4 +1,10 @@
-# docker-plasma
+# docker-plasma [![ci](https://github.com/jshrake/docker-plasma/actions/workflows/main.yaml/badge.svg)](https://github.com/jshrake/docker-plasma/actions/workflows/main.yaml)
+
+
+- **plasma-pool-tcp-server**:      [![Docker Image Size](https://badgen.net/docker/size/jshrake/plasma-pool-tcp-server?icon=docker&label=image%20size)](https://hub.docker.com/r/jshrake/plasma-pool-tcp-server/)
+- **plasma-pool-zeroconf-server**: [![Docker Image Size](https://badgen.net/docker/size/jshrake/plasma-pool-zeroconf-server?icon=docker&label=image%20size)](https://hub.docker.com/r/jshrake/plasma-pool-zeroconf-server/)
+
+---
 
 Docker images and compose file for [plasma](https://github.com/zeugma-hamper/plasma). Specificaly for [pool-tcp-server](https://github.com/zeugma-hamper/plasma/blob/iz/libPlasma/c/pool_tcp_server.c) and [pool-server-zeroconf-adapter](https://github.com/zeugma-hamper/plasma/blob/iz/libPlasma/zeroconf/pool-server-zeroconf-adapter.cpp). Everything you need to run a pool tcp server that is zeroconf announced on your local network!
 
